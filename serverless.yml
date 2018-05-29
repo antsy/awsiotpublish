@@ -1,0 +1,32 @@
+service: aws-iot-test
+
+provider:
+  profile: PUT-AWS-PROFILE-NAME-HERE
+  name: aws
+  runtime: go1.x
+  stage: dev
+  region: eu-west-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - 'iot:Connect'
+        - 'iot:Subscribe'
+        - 'iot:Publish'
+        - 'iot:Receive'
+        - 'iot:DescribeEndpoint'
+      Resource: "*"
+
+package:
+ exclude:
+   - ./**
+ include:
+   - ./bin/**
+
+functions:
+  awsiotpublish:
+    handler: bin/awsiotpublish
+    events:
+     - http:
+         path: iot/{topic}/{message}
+         method: post
+
